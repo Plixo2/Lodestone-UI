@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+}
+project.buildDir='C:/Users/Mo/Documents/slickUI/libs'
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    implementation files('libs/IxoUtil.jar')
+
+}
+
+test {
+    useJUnitPlatform()
+}
+configurations {
+    jar.archiveName = 'LodestoneUI.jar'
+}
