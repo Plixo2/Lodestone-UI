@@ -15,7 +15,11 @@ public class UIGrid extends UICanvas {
     float dragX, dragY;
     float startX, startY;
     boolean shouldDrawLines = false;
+    int lineSpacing = 0;
+    boolean drawCross = true;
+
     boolean canDrag = true;
+    boolean scissor = false;
 
     public void setShouldDrawLines(boolean shouldDrawLines) {
         this.shouldDrawLines = shouldDrawLines;
@@ -46,17 +50,33 @@ public class UIGrid extends UICanvas {
             }
         }
 
-        float[] modelViewMatrix = gui.getModelViewMatrix();
+
+
+        float[] mat = gui.getModelViewMatrix();
+        Vector2f globalPosMIN = gui.toScreenSpace(mat,x,y);
+        Vector2f globalPosMAX = gui.toScreenSpace(mat,x + width,y + height);
 
         gui.pushMatrix();
         gui.translate(planeX, planeY);
         gui.scale(getRelative(), getRelative());
+
+
+        if(scissor) {
+            gui.createScissorBox(globalPosMIN.x, globalPosMIN.y, globalPosMAX.x, globalPosMAX.y);
+            gui.activateScissor();
+        }
+
 
         if (shouldDrawLines) {
             drawLines();
         }
         Vector2f mouseToWorld = screenToWorld(mouseX, mouseY);
         drawScreenTranslated(mouseToWorld.x, mouseToWorld.y);
+
+        if(scissor) {
+            gui.deactivateScissor();
+        }
+
         gui.popMatrix();
 
     }
@@ -127,9 +147,9 @@ public class UIGrid extends UICanvas {
     }
 
     void drawLines() {
-        int i = 50;
-        Vector2f top = screenToWorld(-i, -i);
-        Vector2f bottom = screenToWorld(width + i, height + i);
+        int i = lineSpacing;
+        Vector2f top = screenToWorld(x-i, y-i);
+        Vector2f bottom = screenToWorld(x+width + i, y+height + i);
         float x = top.x;
         float mX = x % i;
         float y = top.y;
@@ -138,18 +158,19 @@ public class UIGrid extends UICanvas {
 
         for (float j = top.x; j <= bottom.x; j += i) {
             float off = j - mX;
-            gui.drawLine(off, top.y, off, bottom.y, color, 1);
+            gui.drawLine(off, top.y, off, bottom.y+i, color, 1);
         }
         for (float j = top.y; j <= bottom.y; j += i) {
             float off = j - mY;
             gui.drawLine(top.x, off, bottom.x, off, color, 1);
         }
 
-        i = 25;
-        Vector2f mid = screenToWorld(0, 0);
-        //UGui.drawCircle(0, 0, 3, -1);
-        gui.drawLine(-i, 0, i, 0, -1, 2 * gui.getScale());
-        gui.drawLine(0, -i, 0, i, -1, 2 * gui.getScale());
+        i /= 2;
+        if(drawCross) {
+            Vector2f mid = screenToWorld(0, 0);
+            gui.drawLine(-i, 0, i, 0, -1, 2 * gui.getScale());
+            gui.drawLine(0, -i, 0, i, -1, 2 * gui.getScale());
+        }
     }
 
     public float getRelative() {
@@ -221,6 +242,30 @@ public class UIGrid extends UICanvas {
 
     public void enableDragging() {
         this.canDrag = true;
+    }
+
+    public void setScissor(boolean scissor) {
+        this.scissor = scissor;
+    }
+
+    public boolean isScissor() {
+        return scissor;
+    }
+
+    public void setDrawCross(boolean drawCross) {
+        this.drawCross = drawCross;
+    }
+
+    public boolean isDrawCross() {
+        return drawCross;
+    }
+
+    public void setLineSpacing(int lineSpacing) {
+        this.lineSpacing = lineSpacing;
+    }
+
+    public int getLineSpacing() {
+        return lineSpacing;
     }
 }
 

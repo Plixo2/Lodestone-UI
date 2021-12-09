@@ -56,10 +56,12 @@ public class UIRow extends UICanvas {
             gui.createScissorBox(globalPosMIN.x, globalPosMIN.y, globalPosMAX.x, globalPosMAX.y);
             gui.activateScissor();
         }
-        gui.translate(x, y - offset);
-
+        gui.translate(x-offset, y);
+        float add = 0;
         for (UIElement element : elements) {
+            element.x = add;
             element.drawScreen(mouseX - x, mouseY - y);
+            add += element.width + space;
         }
         if(scissor) {
         gui.deactivateScissor();
@@ -70,7 +72,7 @@ public class UIRow extends UICanvas {
 
     @Override
     public void onTick() {
-        sort();
+      //  sort();
         super.onTick();
     }
 
@@ -118,6 +120,7 @@ public class UIRow extends UICanvas {
 
     @Override
     public void pack() {
+        this.width = 0;
         for (UIElement element : elements) {
             this.width = Math.max(element.x + element.width, this.width);
             this.height = Math.max(element.y + element.height, this.height);

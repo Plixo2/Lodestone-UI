@@ -17,7 +17,7 @@ public class UICircle extends UIElement {
     @Override
     public void drawScreen(float mouseX, float mouseY) {
 
-        gui.drawCircle(x + width / 2, y + height / 2, radius + 1, getHoverColor());
+        gui.drawCircle(x + width / 2, y + height / 2, radius *1.1f, getHoverColor());
         gui.drawCircle(x + width / 2, y + height / 2, radius, getColor());
 
 

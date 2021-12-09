@@ -4,7 +4,11 @@ package com.plixo.ui.resource;
 import com.plixo.ui.elements.UIElement;
 import com.plixo.ui.elements.canvas.UICanvas;
 import com.plixo.util.reference.EmptyReference;
+import com.plixo.util.reference.InterfaceReference;
 import com.plixo.util.reference.Reference;
+
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class UIReferenceHolderCanvas<O> extends UICanvas implements IUIReferenceHolder<O> {
 
@@ -13,6 +17,11 @@ public class UIReferenceHolderCanvas<O> extends UICanvas implements IUIReference
     @Override
     public void setReference(Reference<O> reference) {
         this.reference = reference;
+    }
+
+    @Override
+    public void setReference(Consumer<O> consumer, Supplier<O> supplier) {
+        reference = new InterfaceReference<>(consumer,supplier);
     }
 
     @Override

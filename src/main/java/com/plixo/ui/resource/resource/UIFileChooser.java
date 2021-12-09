@@ -62,7 +62,6 @@ public class UIFileChooser extends UIReferenceHolderCanvas<File> {
             frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
             JFileChooser chooser = new JFileChooser();
 
-
             chooser.setCurrentDirectory(FileUtil.getFolderFromName(""));
             frame.add(chooser, BorderLayout.CENTER);
 

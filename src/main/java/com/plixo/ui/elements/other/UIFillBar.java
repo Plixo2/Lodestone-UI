@@ -5,10 +5,22 @@ import com.plixo.ui.ColorLib;
 import com.plixo.ui.elements.UIElement;
 import com.plixo.ui.resource.util.SimpleSlider;
 import com.plixo.util.Util;
+import com.plixo.util.reference.Reference;
+
+
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class UIFillBar extends UIElement {
+    private static final DecimalFormat format = new DecimalFormat("0.00");
+    static  {
+        format.setRoundingMode(RoundingMode.HALF_UP);
+    }
 
     boolean isDraggable = false;
+    boolean drawNumber = false;
 
     boolean dragged = false;
 
@@ -16,34 +28,42 @@ public class UIFillBar extends UIElement {
         setColor(ColorLib.getMainColor());
     }
 
-    SimpleSlider simpleSlider;
-
-    public void setSimpleSlider(SimpleSlider simpleSlider) {
-        this.simpleSlider = simpleSlider;
-    }
+    Reference<Float> reference;
+    float min = 0, max = 1;
 
     @Override
     public void drawScreen(float mouseX, float mouseY) {
 
-        float size = 5;
+        float size = 0;
         float upperBound = x + size;
         float lowerBound = x + width - size;
 
         float rel = Util.clampFloat((mouseX - upperBound) / (lowerBound-upperBound), 1, 0);
         if (dragged && isDraggable) {
-            simpleSlider.setValue(simpleSlider.min + rel * (simpleSlider.max- simpleSlider.min));
+            reference.setValue(min + rel * (max- min));
         }
 
-        float percent = Util.clampFloat( (simpleSlider.getValue() - simpleSlider.min) / (simpleSlider.max- simpleSlider.min),1,0);
+        final float value = reference.getValue();
+        float percent = Util.clampFloat( (value - min) / (max- min),1,0);
 
         float rad = Math.min((this.width*percent), 100);
         gui.drawRoundedRect(x,y,x+width/2,y+height,rad, ColorLib.getBackground(0.2f));
         gui.drawRoundedRect(x, y, x + this.width, y+height, 100, ColorLib.getBackground(0.2f));
 
-        gui.drawRoundedRect(upperBound, y+size, upperBound+(lowerBound-upperBound)*percent, y+height-size, 100, getColor());
+        final float right = upperBound + (lowerBound - upperBound) * percent;
+        gui.drawRoundedRect(upperBound, y+size, right, y+height-size, 100, getColor());
 
         if(isHovered(mouseX,mouseY) && getDisplayName() != null) {
             gui.drawString(getDisplayName(),mouseX,mouseY, ColorLib.getTextColor());
+        }
+
+        if(drawNumber) {
+            String text = format.format(value);
+            if(max == 100) {
+                text = Math.round(value) + "%";
+            }
+            float min = upperBound + 5;
+            gui.drawString(text, min, y + height / 2, ColorLib.getTextColor());
         }
 
         super.drawScreen(mouseX, mouseY);
@@ -55,6 +75,14 @@ public class UIFillBar extends UIElement {
 
     public void setNotDraggable() {
         isDraggable = false;
+    }
+
+    public void setDrawNumber(boolean drawNumber) {
+        this.drawNumber = drawNumber;
+    }
+
+    public boolean isDrawNumber() {
+        return drawNumber;
     }
 
     @Override
@@ -71,4 +99,24 @@ public class UIFillBar extends UIElement {
         super.mouseReleased(mouseX, mouseY, state);
     }
 
+
+    public void setMax(float max) {
+        this.max = max;
+    }
+
+    public void setMin(float min) {
+        this.min = min;
+    }
+
+    public float getMax() {
+        return max;
+    }
+
+    public float getMin() {
+        return min;
+    }
+
+    public void setReference(Reference<Float> reference) {
+        this.reference = reference;
+    }
 }

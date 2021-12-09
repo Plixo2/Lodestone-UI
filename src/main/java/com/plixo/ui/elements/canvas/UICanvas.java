@@ -70,13 +70,7 @@ public class UICanvas extends UIElement {
         super.keyTyped(typedChar, keyCode);
     }
 
-    @Override
-    public void keyPressed(int key, int scanCode, int action) {
-        for (UIElement element : elements) {
-            element.keyPressed(key, scanCode, action);
-        }
-        super.keyPressed(key, scanCode, action);
-    }
+
 
     @Override
     public void mouseClicked(float mouseX, float mouseY, int mouseButton) {
@@ -106,6 +100,8 @@ public class UICanvas extends UIElement {
 
 
     public void pack() {
+        this.width = 0;
+        this.height = 0;
         for (UIElement element : elements) {
             this.width = Math.max(element.x+element.width,this.width);
             this.height = Math.max(element.y+element.height,this.height);

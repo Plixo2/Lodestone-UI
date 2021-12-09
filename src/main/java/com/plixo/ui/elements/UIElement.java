@@ -1,14 +1,13 @@
 package com.plixo.ui.elements;
 
 
-import com.plixo.ui.ColorLib;
-import com.plixo.ui.IMouse;
-import com.plixo.ui.IRenderer;
-import com.plixo.ui.IOObject;
-import com.plixo.ui.IKeyboard;
+import com.plixo.ui.*;
+import com.plixo.ui.elements.canvas.UICanvas;
 import com.plixo.util.Color;
 import com.plixo.util.Util;
 
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -30,6 +29,9 @@ public abstract class UIElement implements IGuiEvent {
     Runnable action;
     Runnable option;
     Runnable mouseOver;
+    Consumer<DropTarget> dropTarget;
+    Supplier<DropTarget> startDragging;
+    boolean dragging = false;
     int alignment = 0;
 
     float roundness = 0;
@@ -62,6 +64,10 @@ public abstract class UIElement implements IGuiEvent {
     public void mouseClicked(float mouseX, float mouseY, int mouseButton) {
         if (isHovered(mouseX, mouseY)) {
             if (mouseButton == 0) {
+                dragging = true;
+                if(startDragging != null) {
+                    DropTarget.currentDropTarget = startDragging.get();
+                }
                 if (action != null) {
                     action.run();
                 }
@@ -77,6 +83,19 @@ public abstract class UIElement implements IGuiEvent {
                 }
             }
         }
+    }
+
+    @Override
+    public void mouseReleased(float mouseX, float mouseY, int state) {
+        dragging = false;
+       if(isHovered(mouseX, mouseY) && state == 0) {
+           if(dropTarget != null) {
+               if(DropTarget.currentDropTarget != null) {
+                   dropTarget.accept(DropTarget.currentDropTarget);
+                   DropTarget.currentDropTarget = null;
+               }
+           }
+       }
     }
 
     public void updateHoverProgress(float mouseX, float mouseY) {
@@ -98,12 +117,11 @@ public abstract class UIElement implements IGuiEvent {
     }
 
     public void copyDimensions(UIElement element) {
-        this.x = element.x;
-        this.y = element.y;
-        this.width = element.width;
-        this.height = element.height;
+        setDimensions(element.x,element.y,element.width,element.height);
     }
-
+    public void scaleDimensions(UIElement element) {
+        setDimensions(this.x,this.y,element.width,element.height);
+    }
 
     public void base(float mouseX, float mouseY) {
         updateHoverProgress(mouseX, mouseY);
@@ -254,7 +272,6 @@ public abstract class UIElement implements IGuiEvent {
         return action;
     }
 
-
     public float getHoverProgress() {
         return hoverProgress;
     }
@@ -282,4 +299,35 @@ public abstract class UIElement implements IGuiEvent {
     public Runnable getMouseOver() {
         return mouseOver;
     }
+
+    public void onDrop(Consumer<DropTarget> dropTarget) {
+        this.dropTarget = dropTarget;
+    }
+
+    public Consumer<DropTarget> getDropTarget() {
+        return dropTarget;
+    }
+
+    public void setDragging(boolean dragging) {
+        this.dragging = dragging;
+    }
+
+    public boolean isDragging() {
+        return dragging;
+    }
+
+    public void setDropTarget(Supplier<DropTarget> startDragging) {
+        this.startDragging = startDragging;
+    }
+
+
+    public UIElement border(float size , int color) {
+        UICanvas canvas = new UICanvas();
+        canvas.setDimensions(x-size,y-size,width+size*2,height+size*2);
+        canvas.add(this);
+        canvas.setColor(color);
+        return canvas;
+    }
+
+
 }

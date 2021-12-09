@@ -21,12 +21,19 @@ public class UIScrollBar extends UIElement {
         float upperBound = y + draggableHeight;
         float lowerBound = y + height - draggableHeight;
 
-        float rel = Util.clampFloat((mouseY - upperBound) / (lowerBound-upperBound), 1, 0);
+        float rel = Util.clamp01((mouseY - upperBound) / (lowerBound-upperBound));
         if (dragged) {
             if (consumer != null) {
                 consumer.accept(rel);
             }
+        } else {
+            if(isHovered(mouseX, mouseY)) {
+                if (consumer != null) {
+                    consumer.accept( Util.clamp01(supplier.get()+Math.signum(mouse.getDWheel())*-0.05f));
+                }
+            }
         }
+
 
         gui.drawRoundedRect(x, y, x + this.width, y + height, 100, getColor());
 

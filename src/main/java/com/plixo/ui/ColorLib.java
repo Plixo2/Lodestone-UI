@@ -1,6 +1,7 @@
 package com.plixo.ui;
 
 import com.plixo.util.Color;
+import com.plixo.util.Util;
 
 public class ColorLib {
 
@@ -57,4 +58,11 @@ public class ColorLib {
         return Color.interpolateColor(color, 0xFFFFFFFF, 0.3f);
     }
 
+    public static int getByBytes(int r , int g , int b , int a) {
+        r = Util.clamp(r, 255, 0);
+        g = Util.clamp(g, 255, 0);
+        b = Util.clamp(b, 255, 0);
+        a = Util.clamp(a, 255, 0);
+        return a << 24 | r << 16 | g << 8 | b;
+    }
 }

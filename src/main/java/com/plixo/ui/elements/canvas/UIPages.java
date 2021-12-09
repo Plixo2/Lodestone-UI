@@ -11,8 +11,8 @@ public class UIPages extends UICanvas {
         setColor(ColorLib.getBackground(-0.2f));
     }
 
-    public static float headHeight = 15;
-    public static float headWidth = 65;
+    public float headHeight = 15;
+    public float headWidth = 65;
     int page = 0;
 
     UICanvas header;
@@ -78,13 +78,6 @@ public class UIPages extends UICanvas {
                 }
             }
             //why?????????
-            @Override
-            public void keyPressed(int key, int scanCode, int action) {
-                for (int i = 0; i < elements.size(); i++) {
-                    if (i == page)
-                        elements.get(i).keyPressed(key, scanCode, action);
-                }
-            }
         };
 
         header.setDimensions(0, 0, width, headHeight);
@@ -123,6 +116,13 @@ public class UIPages extends UICanvas {
         switchButton.setDisplayName(canvas.getDisplayName());
         switchButton.setDimensions(id * headWidth, 0, headWidth, header.height);
         header.add(switchButton);
+    }
 
+    public void setHeadHeight(float headHeight) {
+        this.headHeight = headHeight;
+    }
+
+    public void setHeadWidth(float headWidth) {
+        this.headWidth = headWidth;
     }
 }

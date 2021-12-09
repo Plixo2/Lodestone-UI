@@ -11,12 +11,13 @@ public class UIButton extends UIElement {
 
     public UIButton() {
         this.setColor(ColorLib.getMainColor());
+        this.setOutlineWidth(1);
     }
 
     @Override
     public void drawScreen(float mouseX, float mouseY) {
+        this.setOutlineColor(ColorLib.getDarker(getColor()));
         drawDefault();
-        gui.drawLinedRoundedRect(x, y, x + width, y + height, getRoundness(), ColorLib.getDarker(getColor()), 1);
         drawHoverEffect();
         drawName(mouseX, mouseY);
         super.drawScreen(mouseX, mouseY);

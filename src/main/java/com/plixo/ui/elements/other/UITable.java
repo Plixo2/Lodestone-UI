@@ -43,8 +43,8 @@ public class UITable extends UICanvas {
     @Override
     public void setDimensions(float x, float y, float width, float height) {
         UIButton button = new UIButton();
-        button.setDisplayName("^");
-        AtomicInteger i = new AtomicInteger();
+        button.setDisplayName(">");
+        AtomicInteger i = new AtomicInteger(1);
         button.setAction(() -> {
             type = types[i.get() % types.length];
             i.addAndGet(1);
@@ -56,6 +56,5 @@ public class UITable extends UICanvas {
 
         super.setDimensions(x, y, width, height);
     }
-
 
 }

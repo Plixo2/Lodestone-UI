@@ -55,9 +55,11 @@ public class UIColumn extends UICanvas {
             gui.activateScissor();
         }
         gui.translate(x, y - offset);
-
+        float add = 0;
         for (UIElement element : elements) {
+            element.y = add;
             element.drawScreen(mouseX - x, mouseY - y);
+            add += element.height + space;
         }
         if(scissor) {
             gui.deactivateScissor();
@@ -69,7 +71,7 @@ public class UIColumn extends UICanvas {
 
     @Override
     public void onTick() {
-        sort();
+     //   sort();
         super.onTick();
     }
 
@@ -117,6 +119,7 @@ public class UIColumn extends UICanvas {
 
     @Override
     public void pack() {
+        this.height = 0;
         for (UIElement element : elements) {
             this.width = Math.max(element.x + element.width, this.width);
             this.height = Math.max(element.y + element.height, this.height);

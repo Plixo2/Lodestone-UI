@@ -7,7 +7,7 @@ import com.plixo.util.Vector2f;
 
 public class UITextBox extends UIReferenceHolderCanvas<String> {
 
-    boolean scissor = true;
+    boolean scissor = false;
     public UITextBox() {
         super();
         setColor(ColorLib.getBackground(0.3f));
@@ -44,7 +44,9 @@ public class UITextBox extends UIReferenceHolderCanvas<String> {
     //inputs
     @Override
     public void keyTyped(char typedChar, int keyCode) {
+        field.setText(reference.getValue());
         field.textboxKeyTyped(typedChar, keyCode);
+        reference.setValue(field.getText());
         super.keyTyped(typedChar, keyCode);
     }
 
@@ -52,12 +54,7 @@ public class UITextBox extends UIReferenceHolderCanvas<String> {
     @Override
     public void mouseClicked(float mouseX, float mouseY, int mouseButton) {
         field.mouseClicked((int) (mouseX-x), (int)(mouseY-y), mouseButton);
-        if(isHovered(mouseX,mouseY)) {
-            field.setFocused(true);
-            field.setText(reference.getValue());
-        } else {
-            reference.setValue(field.getText());
-        }
+        field.setFocused(isHovered(mouseX,mouseY));
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 

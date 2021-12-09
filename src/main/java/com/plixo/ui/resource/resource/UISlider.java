@@ -21,8 +21,7 @@ public class UISlider extends UIReferenceHolderCanvas<SimpleSlider> {
         float y = this.y + height * 0.66f;
         gui.drawRect(sliderLeft, y - 1, sliderLeft + sliderWidth, y, ColorLib.getBrighter(getColor()));
         SimpleSlider slider = reference.getValue();
-        float percent = (slider.getValue() - slider.min) / (slider.max - slider.min);
-
+        float percent = Util.clamp01((slider.getValue() - slider.min) / (slider.max - slider.min));
 
         gui.drawCircle(sliderLeft + sliderWidth * percent, y - 0.5f, 3, ColorLib.getMainColor());
         double round = Math.round(slider.getValue() * 1000) / 1000d;

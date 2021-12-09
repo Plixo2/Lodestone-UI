@@ -26,7 +26,7 @@ public class UIColorChooser extends UIReferenceHolderCanvas<Color> {
 
 
 
-        gui.drawStringWithShadow(Integer.toHexString(reference.getValue().getRgba()), x + 4, y + height / 2, ColorLib.getTextColor());
+        gui.drawStringWithShadow(Integer.toHexString(reference.getValue().getRgba()).toUpperCase(), x + 4, y + height / 2, ColorLib.getTextColor());
 
        super.drawScreen(mouseX, mouseY);
     }
